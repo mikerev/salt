@@ -1,0 +1,12 @@
+[Unit]
+Description=tevatron
+
+[Service]
+# Environment= MY_ENVIRONMENT_VAR =/path/to/file.config
+WorkingDirectory=/home/tevatron/sopel
+ExecStart=/usr/bin/python sopel.py
+Restart=always
+User=tevatron
+
+[Install]
+WantedBy=multi-user.target
