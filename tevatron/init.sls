@@ -1,11 +1,12 @@
 tevatron:
-  group:
-    - present
-  user: 
-    - present
+  user.present:
+    - home: /home/tevatron
+    - groups:
+      - tevatron
 
 python-pip:
-  pkg.installed
+  pkg.installed:
+    - name: python-pip 
 
 sopel-clone:
   git.latest:
@@ -15,9 +16,16 @@ sopel-clone:
     - branch: master
     - force_reset: True
 
+install-sopel:
+  cmd.run:
+    - name: 'python setup.py install'
+    - cwd: /home/tevatron/sopel
+    - onchanges:
+        - git: sopel-clone
+
 tevatron-files:
   git.latest:
-    - name: git@github.com:mikerev/tevatron.git
+    - name: https://github.com/mikerev/tevatron.git
     - target: /home/tevatron/custom_modules
     - user: tevatron
     - branch: master
@@ -37,10 +45,9 @@ tevatron-files:
     - template: jinja
 
 /etc/systemd/system/tevatron.service:
-  file.managed:
-    - user: tevatron
-    - mode: 0644
-    - source: salt://tevatron/tevatron.service
+  file.symlink:
+    - target: /home/tevatron/custom_modules/tevatron.service
+
 
 bounce-tevatron-on-sopel-pull:
   cmd.run:
@@ -49,6 +56,7 @@ bounce-tevatron-on-sopel-pull:
     - onchanges:
         - git: sopel-clone
         - git: tevatron-files
+        - file: /home/tevatron/.sopel/default.cfg
 
 /home/tevatron/custom_modules:
   file.directory:
