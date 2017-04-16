@@ -31,6 +31,14 @@ tevatron-files:
     - branch: master
     - force_reset: True
 
+{% for pattern, value in pillar.get('reddit', {}).items() %}
+/home/tevatron/custom_modules/personality.py-{{ pattern }}:
+  file.replace:
+    - name: /home/tevatron/custom_modules/personality.py
+    - pattern: {{ pattern }} 
+    - repl: {{ value }}
+{% endfor %}
+
 /home/tevatron/.sopel:
   file.directory:
     - user: tevatron
